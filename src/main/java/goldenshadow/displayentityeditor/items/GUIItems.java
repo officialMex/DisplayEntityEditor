@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockDataMeta;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 
@@ -24,6 +23,7 @@ public class GUIItems {
 
     /**
      * Creates the rename gui item
+     *
      * @param name The current name
      * @return The item
      */
@@ -40,6 +40,7 @@ public class GUIItems {
 
     /**
      * Creates the glowing gui item
+     *
      * @param current If the entity is currently glowing
      * @return The item
      */
@@ -55,6 +56,7 @@ public class GUIItems {
 
     /**
      * Creates the glow color gui item
+     *
      * @param current The current glow color
      * @return The item
      */
@@ -70,6 +72,7 @@ public class GUIItems {
 
     /**
      * Creates the left rotation normalised gui item
+     *
      * @param current If left rotation is currently normalised
      * @return The item
      */
@@ -85,6 +88,7 @@ public class GUIItems {
 
     /**
      * Creates the right rotation normalised gui item
+     *
      * @param current If right rotation is currently normalised
      * @return The item
      */
@@ -100,6 +104,7 @@ public class GUIItems {
 
     /**
      * Creates the view range gui item
+     *
      * @param current The current view range
      * @return The item
      */
@@ -115,6 +120,7 @@ public class GUIItems {
 
     /**
      * Creates the display width gui item
+     *
      * @param current The current display width
      * @return The item
      */
@@ -130,6 +136,7 @@ public class GUIItems {
 
     /**
      * Creates the display height gui item
+     *
      * @param current The current display height
      * @return The item
      */
@@ -145,6 +152,7 @@ public class GUIItems {
 
     /**
      * Creates the billboard type gui item
+     *
      * @param current The current billboard type
      * @return The item
      */
@@ -160,6 +168,7 @@ public class GUIItems {
 
     /**
      * Creates the shadow radius gui item
+     *
      * @param current The current shadow radius
      * @return The item
      */
@@ -175,6 +184,7 @@ public class GUIItems {
 
     /**
      * Creates the shadow strength gui item
+     *
      * @param current The current shadow strength
      * @return The item
      */
@@ -190,6 +200,7 @@ public class GUIItems {
 
     /**
      * Creates the lock gui item
+     *
      * @return The item
      */
     public ItemStack lock() {
@@ -203,6 +214,7 @@ public class GUIItems {
 
     /**
      * Creates the skylight gui item
+     *
      * @param current The current skylight
      * @return The item
      */
@@ -219,6 +231,7 @@ public class GUIItems {
 
     /**
      * Creates the block light gui item
+     *
      * @param current The current block light
      * @return The item
      */
@@ -235,6 +248,7 @@ public class GUIItems {
 
     /**
      * Creates the delete gui item
+     *
      * @return The item
      */
     public ItemStack delete() {
@@ -249,6 +263,7 @@ public class GUIItems {
 
     /**
      * Creates the filler gui item
+     *
      * @return The item
      */
     public ItemStack filler() {
@@ -259,6 +274,7 @@ public class GUIItems {
 
     /**
      * Creates the item transform gui item
+     *
      * @param current The current transform type
      * @return The item
      */
@@ -275,6 +291,7 @@ public class GUIItems {
 
     /**
      * Creates the text opacity gui item
+     *
      * @param current The current text opacity
      * @return The item
      */
@@ -292,6 +309,7 @@ public class GUIItems {
 
     /**
      * Creates the line width gui item
+     *
      * @param current The current line width
      * @return The item
      */
@@ -308,6 +326,7 @@ public class GUIItems {
 
     /**
      * Creates the default background gui item
+     *
      * @param current If the background is currently set to default
      * @return The item
      */
@@ -324,6 +343,7 @@ public class GUIItems {
 
     /**
      * Creates the text see through gui item
+     *
      * @param current If the text is currently visible through blocks
      * @return The item
      */
@@ -340,6 +360,7 @@ public class GUIItems {
 
     /**
      * Creates the text shadow gui item
+     *
      * @param current If the text currently has shadows
      * @return The item
      */
@@ -356,6 +377,7 @@ public class GUIItems {
 
     /**
      * Creates the text background color gui item
+     *
      * @param current The current background color
      * @return The item
      */
@@ -372,6 +394,7 @@ public class GUIItems {
 
     /**
      * Creates the text background opacity gui item
+     *
      * @param current The current background color
      * @return The item
      */
@@ -388,6 +411,7 @@ public class GUIItems {
 
     /**
      * Creates the text alignment gui item
+     *
      * @param current The current text alignment
      * @return The item
      */
@@ -404,6 +428,7 @@ public class GUIItems {
 
     /**
      * Creates the text gui item
+     *
      * @return The item
      * @implNote This item will not show the current text, as it could be very long and therefore be unreadable when displayed as item lore. If the user wants to see what text is currently being displayed, they should just close the gui for a second and read what's in front of them
      */
@@ -419,6 +444,7 @@ public class GUIItems {
 
     /**
      * Creates the block state gui item
+     *
      * @param current The current block state. If there is no data, it will be displayed as '[]'
      * @return The item
      */
@@ -437,6 +463,7 @@ public class GUIItems {
 
     /**
      * A utility method used to set the brightness level of a light item
+     *
      * @param current The brightness level it should be set to
      */
     private void setBrightnessLevel(ItemStack itemStack, int current) {
