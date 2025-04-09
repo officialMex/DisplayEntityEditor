@@ -13,6 +13,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockDataMeta;
 
 import java.util.ArrayList;
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * A utility class where all the gui items are created
@@ -378,7 +381,7 @@ public class GUIItems {
         Utilities.setMeta(itemStack, DisplayEntityEditor.messageManager.getString("text_background_opacity_name"),
                 DisplayEntityEditor.messageManager.getList("text_background_opacity_lore"),
                 "GUITextBackgroundOpacity",
-                current.getAlpha()
+                ofNullable(current).map(Color::getAlpha).orElse(255)
         );
         return itemStack;
     }
