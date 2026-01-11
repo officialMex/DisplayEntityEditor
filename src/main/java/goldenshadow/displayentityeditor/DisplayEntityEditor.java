@@ -1,11 +1,13 @@
 package goldenshadow.displayentityeditor;
 
-import goldenshadow.displayentityeditor.commands.Command;
-import goldenshadow.displayentityeditor.commands.TabComplete;
+import goldenshadow.displayentityeditor.commands.DisplayEntityEditorBrigadierCommand;
 import goldenshadow.displayentityeditor.events.*;
 import goldenshadow.displayentityeditor.inventories.InventoryFactory;
 import goldenshadow.displayentityeditor.items.GUIItems;
 import goldenshadow.displayentityeditor.items.InventoryItems;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
@@ -15,6 +17,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -80,8 +83,9 @@ public final class DisplayEntityEditor extends JavaPlugin {
 
         conversationFactory = new ConversationFactory(plugin);
         inventoryFactory = new InventoryFactory(new GUIItems(), new InventoryItems());
-        Objects.requireNonNull(getCommand("displayentityeditor")).setExecutor(new Command());
-        Objects.requireNonNull(getCommand("displayentityeditor")).setTabCompleter(new TabComplete());
+
+        registerBrigadierCommand();
+
         Bukkit.getPluginManager().registerEvents(new Interact(editingHandler), plugin);
         Bukkit.getPluginManager().registerEvents(new OffhandSwap(editingHandler), plugin);
         Bukkit.getPluginManager().registerEvents(new InventoryClick(), plugin);
@@ -120,8 +124,17 @@ public final class DisplayEntityEditor extends JavaPlugin {
     @Override
     public void onDisable() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Command.returnInventory(player);
+            DisplayEntityEditorBrigadierCommand.returnInventory(player);
         }
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private void registerBrigadierCommand() {
+        LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
+        manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            final Commands commands = event.registrar();
+            commands.register(DisplayEntityEditorBrigadierCommand.createCommand(), "Command for Display Entity Editor plugin");
+        });
     }
 
     /**

@@ -42,6 +42,10 @@ tasks {
         filesMatching("plugin.yml") {
             expand("version" to version)
         }
+
+        filesMatching("paper-plugin.yml") {
+            expand("version" to version)
+        }
     }
 
     runServer {
