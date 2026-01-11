@@ -1,5 +1,5 @@
 name: DisplayEntityEditor
-version: '${project.version}'
+version: '${version}'
 main: goldenshadow.displayentityeditor.DisplayEntityEditor
 api-version: 1.19
 authors: [_GoldenShadow, officialMex]

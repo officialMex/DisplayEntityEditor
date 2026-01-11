@@ -17,8 +17,8 @@ dependencies {
 }
 
 java {
-    targetCompatibility = JavaVersion.VERSION_25
-    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_21
 }
 
 tasks {
@@ -38,6 +38,8 @@ tasks {
     }
 
     processResources {
-        expand("project" to project)
+        filesMatching("plugin.yml") {
+            expand("version" to version)
+        }
     }
 }
