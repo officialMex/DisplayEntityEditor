@@ -252,7 +252,7 @@ public class InventoryItems {
      * @return The item
      */
     public ItemStack centerPivot() {
-        ItemStack itemStack = new ItemStack(Material.CHAIN);
+        ItemStack itemStack = new ItemStack(Material.CHAIN_COMMAND_BLOCK);
         Utilities.setMeta(itemStack, DisplayEntityEditor.messageManager.getString("center_pivot_name"),
                 DisplayEntityEditor.messageManager.getList("center_pivot_lore"),
                 "InventoryCenterPivot"

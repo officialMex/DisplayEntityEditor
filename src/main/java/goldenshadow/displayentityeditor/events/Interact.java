@@ -90,7 +90,7 @@ public class Interact implements Listener {
     private static void highlightEntity(Display display) {
         display.setGlowing(true);
         Bukkit.getScheduler().scheduleSyncDelayedTask(DisplayEntityEditor.getPlugin(), () -> display.setGlowing(false), 20L);
-        display.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, display.getLocation(), 50, 0.2, 0.2, 0.2, 0);
+        display.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, display.getLocation(), 50, 0.2, 0.2, 0.2, 0);
     }
 
     /**

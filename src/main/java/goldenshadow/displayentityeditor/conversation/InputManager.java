@@ -4,7 +4,7 @@ import goldenshadow.displayentityeditor.DisplayEntityEditor;
 import goldenshadow.displayentityeditor.Utilities;
 import goldenshadow.displayentityeditor.enums.InputType;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -167,8 +167,8 @@ public class InputManager {
 
                 if (DisplayEntityEditor.useMiniMessageFormat) {
                     Component c = DisplayEntityEditor.miniMessage.deserialize(s);
-                    BaseComponent[] b = BungeeComponentSerializer.get().serialize(c);
-                    inputData.entity().setCustomName(TextComponent.toLegacyText(b));
+                    String legacy = LegacyComponentSerializer.legacySection().serialize(c);
+                    inputData.entity().setCustomName(legacy);
                 } else {
                     inputData.entity().setCustomName(ChatColor.translateAlternateColorCodes('&', s));
                 }
@@ -179,8 +179,8 @@ public class InputManager {
 
                 if (DisplayEntityEditor.useMiniMessageFormat) {
                     Component c = DisplayEntityEditor.miniMessage.deserialize(s);
-                    BaseComponent[] b = BungeeComponentSerializer.get().serialize(c);
-                    ((TextDisplay) inputData.entity()).setText(TextComponent.toLegacyText(b));
+                    String legacy = LegacyComponentSerializer.legacySection().serialize(c);
+                    ((TextDisplay) inputData.entity()).setText(legacy);
                 } else {
                     message = message.replace("\\n", "\n");
                     ((TextDisplay) inputData.entity()).setText(ChatColor.translateAlternateColorCodes('&', message));
@@ -192,8 +192,8 @@ public class InputManager {
                 String message = s;
                 if (DisplayEntityEditor.useMiniMessageFormat) {
                     Component c = DisplayEntityEditor.miniMessage.deserialize(s);
-                    BaseComponent[] b = BungeeComponentSerializer.get().serialize(c);
-                    ((TextDisplay) inputData.entity()).setText(((TextDisplay) inputData.entity()).getText() + TextComponent.toLegacyText(b));
+                    String legacy = LegacyComponentSerializer.legacySection().serialize(c);
+                    ((TextDisplay) inputData.entity()).setText(((TextDisplay) inputData.entity()).getText() + legacy);
                 } else {
                     message = message.replace("\\n", "\n");
                     ((TextDisplay) inputData.entity()).setText(ChatColor.translateAlternateColorCodes('&', ((TextDisplay) inputData.entity()).getText() + message));
