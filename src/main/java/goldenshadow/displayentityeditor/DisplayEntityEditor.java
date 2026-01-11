@@ -59,6 +59,7 @@ public final class DisplayEntityEditor extends JavaPlugin {
     public static NamespacedKey toolPrecisionKey;
     public static NamespacedKey toolKey;
 
+    private final DisplayEntityEditorBrigadierCommand command = new DisplayEntityEditorBrigadierCommand();
     private EditingHandler editingHandler;
 
     /**
@@ -124,7 +125,7 @@ public final class DisplayEntityEditor extends JavaPlugin {
     @Override
     public void onDisable() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            DisplayEntityEditorBrigadierCommand.returnInventory(player);
+            command.returnInventory(player);
         }
     }
 
@@ -133,7 +134,7 @@ public final class DisplayEntityEditor extends JavaPlugin {
         LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
-            commands.register(DisplayEntityEditorBrigadierCommand.createCommand(), "Command for Display Entity Editor plugin");
+            commands.register(command.createCommand(), "Command for Display Entity Editor plugin", List.of("dee"));
         });
     }
 
@@ -174,5 +175,9 @@ public final class DisplayEntityEditor extends JavaPlugin {
 
     public EditingHandler getEditingHandler() {
         return editingHandler;
+    }
+
+    public DisplayEntityEditorBrigadierCommand command() {
+        return command;
     }
 }

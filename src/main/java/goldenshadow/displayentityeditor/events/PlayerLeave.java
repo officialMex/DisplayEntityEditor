@@ -1,5 +1,6 @@
 package goldenshadow.displayentityeditor.events;
 
+import goldenshadow.displayentityeditor.DisplayEntityEditor;
 import goldenshadow.displayentityeditor.commands.DisplayEntityEditorBrigadierCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,6 @@ public class PlayerLeave implements Listener {
      */
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
-        DisplayEntityEditorBrigadierCommand.returnInventory(event.getPlayer());
+        DisplayEntityEditor.getPlugin().command().returnInventory(event.getPlayer());
     }
 }

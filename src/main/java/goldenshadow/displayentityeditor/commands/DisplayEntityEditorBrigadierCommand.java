@@ -13,6 +13,7 @@ import goldenshadow.displayentityeditor.enums.InputType;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
@@ -24,18 +25,27 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * Brigadier command handler for the DisplayEntityEditor plugin.
+ * Manages all command registration and execution for editing display entities.
+ * Handles inventory management and command processing for players.
+ */
 @SuppressWarnings("UnstableApiUsage")
 public class DisplayEntityEditorBrigadierCommand {
 
-    private static final HashMap<UUID, ItemStack[]> savedInventories = new HashMap<>();
+    /** Stores saved player inventories mapped by player UUID for later restoration */
+    private final HashMap<UUID, ItemStack[]> savedInventories = new HashMap<>();
 
-    public static LiteralCommandNode<CommandSourceStack> createCommand() {
+    /**
+     * Creates and registers the main displayentityeditor command with all subcommands.
+     *
+     * @return the root LiteralCommandNode for the displayentityeditor command
+     */
+    public LiteralCommandNode<CommandSourceStack> createCommand() {
         return Commands.literal("displayentityeditor")
-                .executes(context -> {
-                    if (!(context.getSource().getSender() instanceof Player p)) {
-                        context.getSource().getSender().sendMessage(DisplayEntityEditor.messageManager.getString("none_player_fail"));
-                        return 0;
-                    }
+                .executes(ctx -> {
+                    Player p = getPlayerOrFail(ctx);
+                    if (p == null) return 0;
 
                     if (savedInventories.containsKey(p.getUniqueId())) {
                         returnInventory(p);
@@ -56,299 +66,225 @@ public class DisplayEntityEditorBrigadierCommand {
                     return Command.SINGLE_SUCCESS;
                 })
                 .then(Commands.literal("reload")
-                        .executes(context -> {
-                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                context.getSource().getSender().sendMessage(DisplayEntityEditor.messageManager.getString("none_player_fail"));
-                                return 0;
-                            }
+                        .executes(ctx -> {
+                            Player p = getPlayerOrFail(ctx);
+                            if (p == null) return 0;
 
-                            DisplayEntityEditor.getPlugin().reloadConfig();
-                            DisplayEntityEditor.alternateTextInput = DisplayEntityEditor.getPlugin().getConfig().getBoolean("alternate-text-input");
-                            DisplayEntityEditor.useMiniMessageFormat = DisplayEntityEditor.getPlugin().getConfig().getBoolean("use-minimessage-format");
                             try {
+                                DisplayEntityEditor.getPlugin().reloadConfig();
+                                DisplayEntityEditor.alternateTextInput = DisplayEntityEditor.getPlugin().getConfig().getBoolean("alternate-text-input");
+                                DisplayEntityEditor.useMiniMessageFormat = DisplayEntityEditor.getPlugin().getConfig().getBoolean("use-minimessage-format");
                                 DisplayEntityEditor.checkForMessageFile();
+                                p.sendMessage(Utilities.getInfoMessageFormat(DisplayEntityEditor.messageManager.getString("config_reload")));
                             } catch (IOException e) {
                                 p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("messages_reload_fail")));
                             }
-                            p.sendMessage(Utilities.getInfoMessageFormat(DisplayEntityEditor.messageManager.getString("config_reload")));
                             return Command.SINGLE_SUCCESS;
                         }))
                 .then(Commands.literal("edit")
-                        .then(Commands.literal("name")
-                                .then(Commands.argument("value", StringArgumentType.greedyString())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            String input = StringArgumentType.getString(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulTextInput(new InputData(display, InputType.NAME, null), input, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("text")
-                                .then(Commands.argument("value", StringArgumentType.greedyString())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            String input = StringArgumentType.getString(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null || !(display instanceof TextDisplay)) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulTextInput(new InputData(display, InputType.TEXT, null), input, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("text_append")
-                                .then(Commands.argument("value", StringArgumentType.greedyString())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            String input = StringArgumentType.getString(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null || !(display instanceof TextDisplay)) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulTextInput(new InputData(display, InputType.TEXT_APPEND, null), input, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("background_color")
-                                .then(Commands.argument("value", StringArgumentType.greedyString())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            String input = StringArgumentType.getString(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null || !(display instanceof TextDisplay)) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulTextInput(new InputData(display, InputType.BACKGROUND_COLOR, null), input, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("glow_color")
-                                .then(Commands.argument("value", StringArgumentType.greedyString())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            String input = StringArgumentType.getString(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null || display instanceof TextDisplay) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulTextInput(new InputData(display, InputType.GLOW_COLOR, null), input, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("block_state")
-                                .then(Commands.argument("value", StringArgumentType.greedyString())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            String input = StringArgumentType.getString(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null || !(display instanceof BlockDisplay)) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulTextInput(new InputData(display, InputType.BLOCK_STATE, ((BlockDisplay) display).getBlock().getMaterial()), input, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("view_range")
-                                .then(Commands.argument("value", FloatArgumentType.floatArg())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            float value = FloatArgumentType.getFloat(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulFloatInput(new InputData(display, InputType.VIEW_RANGE, null), value, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("display_height")
-                                .then(Commands.argument("value", FloatArgumentType.floatArg())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            float value = FloatArgumentType.getFloat(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulFloatInput(new InputData(display, InputType.DISPLAY_HEIGHT, null), value, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("display_width")
-                                .then(Commands.argument("value", FloatArgumentType.floatArg())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            float value = FloatArgumentType.getFloat(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulFloatInput(new InputData(display, InputType.DISPLAY_WIDTH, null), value, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("shadow_radius")
-                                .then(Commands.argument("value", FloatArgumentType.floatArg())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            float value = FloatArgumentType.getFloat(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulFloatInput(new InputData(display, InputType.SHADOW_RADIUS, null), value, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("shadow_strength")
-                                .then(Commands.argument("value", FloatArgumentType.floatArg(0f, 1f))
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            float value = FloatArgumentType.getFloat(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulFloatInput(new InputData(display, InputType.SHADOW_STRENGTH, null), value, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("text_opacity")
-                                .then(Commands.argument("value", IntegerArgumentType.integer(Byte.MIN_VALUE, Byte.MAX_VALUE))
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            int value = IntegerArgumentType.getInteger(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null || !(display instanceof TextDisplay)) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulByteInput(new InputData(display, InputType.TEXT_OPACITY, null), value, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("background_opacity")
-                                .then(Commands.argument("value", IntegerArgumentType.integer(Byte.MIN_VALUE, Byte.MAX_VALUE))
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            int value = IntegerArgumentType.getInteger(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null || !(display instanceof TextDisplay)) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulByteInput(new InputData(display, InputType.BACKGROUND_OPACITY, null), value, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        })))
-                        .then(Commands.literal("line_width")
-                                .then(Commands.argument("value", IntegerArgumentType.integer())
-                                        .executes(context -> {
-                                            if (!(context.getSource().getSender() instanceof Player p)) {
-                                                return 0;
-                                            }
-                                            if (!DisplayEntityEditor.alternateTextInput) {
-                                                return 0;
-                                            }
-                                            int value = IntegerArgumentType.getInteger(context, "value");
-                                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
-                                            if (display == null || !(display instanceof TextDisplay)) {
-                                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
-                                                return 0;
-                                            }
-                                            InputManager.successfulIntegerInput(new InputData(display, InputType.LINE_WIDTH, null), value, p);
-                                            return Command.SINGLE_SUCCESS;
-                                        }))))
+                        .then(editCommand("name", InputType.NAME, false))
+                        .then(editCommand("text", InputType.TEXT, true))
+                        .then(editCommand("text_append", InputType.TEXT_APPEND, true))
+                        .then(editCommand("background_color", InputType.BACKGROUND_COLOR, true))
+                        .then(editCommand("glow_color", InputType.GLOW_COLOR, false))
+                        .then(editCommand("block_state", InputType.BLOCK_STATE, false))
+                        .then(floatCommand("view_range", InputType.VIEW_RANGE, null, null))
+                        .then(floatCommand("display_height", InputType.DISPLAY_HEIGHT, null, null))
+                        .then(floatCommand("display_width", InputType.DISPLAY_WIDTH, null, null))
+                        .then(floatCommand("shadow_radius", InputType.SHADOW_RADIUS, null, null))
+                        .then(floatCommand("shadow_strength", InputType.SHADOW_STRENGTH, 0f, 1f))
+                        .then(byteCommand("text_opacity", InputType.TEXT_OPACITY, true))
+                        .then(byteCommand("background_opacity", InputType.BACKGROUND_OPACITY, true))
+                        .then(integerCommand("line_width", InputType.LINE_WIDTH, true)))
                 .build();
     }
 
     /**
-     * A utility method used to save a players inventory in order to be able to return it later
-     * @param player The player whose inventory should be saved
+     * Creates a text input command node for editing string-based display properties.
+     *
+     * @param name the command literal name
+     * @param type the input type enum specifying which property is being edited
+     * @param textDisplayOnly if true, the command only works with TextDisplay entities
+     * @return the configured LiteralCommandNode
      */
-    private static void saveInventory(Player player) {
+    private LiteralCommandNode<CommandSourceStack> editCommand(String name, InputType type, boolean textDisplayOnly) {
+        return Commands.literal(name)
+                .then(Commands.argument("value", StringArgumentType.greedyString())
+                        .executes(ctx -> {
+                            // Validate player is online and alternate text input is enabled
+                            Player p = getPlayerOrFail(ctx);
+                            if (p == null || !DisplayEntityEditor.alternateTextInput) return 0;
+
+                            // Get the input string and nearest display entity
+                            String input = StringArgumentType.getString(ctx, "value");
+                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
+
+                            // Validate display entity type requirements
+                            if (display == null || (textDisplayOnly && !(display instanceof TextDisplay))) {
+                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
+                                return 0;
+                            }
+
+                            // Extract additional data if needed (e.g., block material for block states)
+                            Material extra = (type == InputType.BLOCK_STATE && display instanceof BlockDisplay bd) ? bd.getBlock().getMaterial() : Material.AIR;
+                            InputManager.successfulTextInput(new InputData(display, type, extra), input, p);
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                .build();
+    }
+
+    /**
+     * Creates a float input command node for editing float-based display properties.
+     * Optionally enforces minimum and maximum value constraints.
+     *
+     * @param name the command literal name
+     * @param type the input type enum specifying which property is being edited
+     * @param min the minimum allowed value, or null for no minimum
+     * @param max the maximum allowed value, or null for no maximum
+     * @return the configured LiteralCommandNode
+     */
+    private LiteralCommandNode<CommandSourceStack> floatCommand(String name, InputType type, Float min, Float max) {
+        // Build argument type with optional min/max constraints
+        FloatArgumentType argType = (min != null && max != null) ? FloatArgumentType.floatArg(min, max) : FloatArgumentType.floatArg();
+        return Commands.literal(name)
+                .then(Commands.argument("value", argType)
+                        .executes(ctx -> {
+                            // Validate player is online and alternate text input is enabled
+                            Player p = getPlayerOrFail(ctx);
+                            if (p == null || !DisplayEntityEditor.alternateTextInput) return 0;
+
+                            // Get float value and nearest display entity
+                            float value = FloatArgumentType.getFloat(ctx, "value");
+                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
+
+                            // Ensure a valid display entity was found
+                            if (display == null) {
+                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
+                                return 0;
+                            }
+
+                            // Process the float input through the input manager
+                            InputManager.successfulFloatInput(new InputData(display, type, null), value, p);
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                .build();
+    }
+
+    /**
+     * Creates a byte input command node for editing byte-based display properties.
+     * Accepts integer values between Byte.MIN_VALUE and Byte.MAX_VALUE.
+     *
+     * @param name the command literal name
+     * @param type the input type enum specifying which property is being edited
+     * @param textDisplayOnly if true, the command only works with TextDisplay entities
+     * @return the configured LiteralCommandNode
+     */
+    private LiteralCommandNode<CommandSourceStack> byteCommand(String name, InputType type, boolean textDisplayOnly) {
+        return Commands.literal(name)
+                .then(Commands.argument("value", IntegerArgumentType.integer(Byte.MIN_VALUE, Byte.MAX_VALUE))
+                        .executes(ctx -> {
+                            // Validate player is online and alternate text input is enabled
+                            Player p = getPlayerOrFail(ctx);
+                            if (p == null || !DisplayEntityEditor.alternateTextInput) return 0;
+
+                            // Get byte value and nearest display entity
+                            int value = IntegerArgumentType.getInteger(ctx, "value");
+                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
+
+                            // Validate display entity type requirements
+                            if (display == null || (textDisplayOnly && !(display instanceof TextDisplay))) {
+                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
+                                return 0;
+                            }
+
+                            // Process the byte input through the input manager
+                            InputManager.successfulByteInput(new InputData(display, type, null), value, p);
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                .build();
+    }
+
+    /**
+     * Creates an integer input command node for editing integer-based display properties.
+     *
+     * @param name the command literal name
+     * @param type the input type enum specifying which property is being edited
+     * @param textDisplayOnly if true, the command only works with TextDisplay entities
+     * @return the configured LiteralCommandNode
+     */
+    private LiteralCommandNode<CommandSourceStack> integerCommand(String name, InputType type, boolean textDisplayOnly) {
+        return Commands.literal(name)
+                .then(Commands.argument("value", IntegerArgumentType.integer())
+                        .executes(ctx -> {
+                            // Validate player is online and alternate text input is enabled
+                            Player p = getPlayerOrFail(ctx);
+                            if (p == null || !DisplayEntityEditor.alternateTextInput) return 0;
+
+                            // Get integer value and nearest display entity
+                            int value = IntegerArgumentType.getInteger(ctx, "value");
+                            Display display = Utilities.getNearestDisplayEntity(p.getLocation(), true);
+
+                            // Validate display entity type requirements
+                            if (display == null || (textDisplayOnly && !(display instanceof TextDisplay))) {
+                                p.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
+                                return 0;
+                            }
+
+                            // Process the integer input through the input manager
+                            InputManager.successfulIntegerInput(new InputData(display, type, null), value, p);
+                            return Command.SINGLE_SUCCESS;
+                        }))
+                .build();
+    }
+
+    /**
+     * Extracts the Player from the command context and validates it.
+     * Sends an error message if the command sender is not a player.
+     *
+     * @param ctx the brigadier command context
+     * @return the Player if the sender is a player, or null if validation fails
+     */
+    private Player getPlayerOrFail(com.mojang.brigadier.context.CommandContext<CommandSourceStack> ctx) {
+        // Validate the command sender is an online player
+        if (!(ctx.getSource().getSender() instanceof Player p)) {
+            ctx.getSource().getSender().sendMessage(DisplayEntityEditor.messageManager.getString("none_player_fail"));
+            return null;
+        }
+        return p;
+    }
+
+    /**
+     * Saves a player's current inventory to storage for later restoration.
+     * Clears the player's inventory after saving.
+     *
+     * @param player the player whose inventory should be saved
+     */
+    private void saveInventory(Player player) {
+        // Store a clone of the current inventory contents
         savedInventories.put(player.getUniqueId(), player.getInventory().getContents().clone());
         player.getInventory().clear();
     }
 
     /**
-     * A utility method used to return a players inventory
-     * @param player The player whose inventory should be returned
+     * Restores a player's previously saved inventory.
+     * Does nothing if no saved inventory exists for the player.
+     *
+     * @param player the player whose inventory should be restored
      */
-    public static void returnInventory(Player player) {
+    public void returnInventory(Player player) {
+        // Check if an inventory is saved for this player
         if (!savedInventories.containsKey(player.getUniqueId())) return;
-        player.getInventory().clear();
+
+        // Retrieve the saved inventory
         ItemStack[] saved = savedInventories.get(player.getUniqueId());
-        for (int i = 0; i < player.getInventory().getSize(); i++) {
+        player.getInventory().clear();
+
+        // Restore all items from the saved inventory
+        for (int i = 0; i < saved.length; i++) {
             player.getInventory().setItem(i, saved[i]);
         }
+
+        // Remove the saved inventory from storage
         savedInventories.remove(player.getUniqueId());
     }
 }
