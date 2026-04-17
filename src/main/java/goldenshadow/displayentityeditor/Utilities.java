@@ -16,6 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 import goldenshadow.displayentityeditor.enums.LockSearchMode;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 
 public class Utilities {
@@ -230,6 +231,61 @@ public class Utilities {
     public static float getToolPrecision(Player p) {
         Double i = p.getPersistentDataContainer().get(DisplayEntityEditor.toolPrecisionKey,  PersistentDataType.DOUBLE);
         return i != null ? i.floatValue() : 1;
+    }
+
+    public static Location getAverageLocation(Collection<Display> displays) {
+        double x = 0, y = 0, z = 0;
+        for (Display d : displays) {
+            x += d.getLocation().getX();
+            y += d.getLocation().getY();
+            z += d.getLocation().getZ();
+        }
+        return new Location(displays.iterator().next().getWorld(), x / displays.size(), y / displays.size(), z / displays.size());
+    }
+
+    public static void rotateGroup(Collection<Display> displays, Location pivot, float angle, boolean horizontal, Player player) {
+        double rad = Math.toRadians(angle);
+        double cos = Math.cos(rad);
+        double sin = Math.sin(rad);
+
+        float playerYaw = player.getLocation().getYaw();
+        double axisX = Math.cos(Math.toRadians(playerYaw));
+        double axisZ = Math.sin(Math.toRadians(playerYaw));
+
+        for (Display d : displays) {
+            Location loc = d.getLocation();
+            double x = loc.getX() - pivot.getX();
+            double y = loc.getY() - pivot.getY();
+            double z = loc.getZ() - pivot.getZ();
+
+            if (horizontal) {
+                // Rotate around global Y axis
+                double newX = x * cos - z * sin;
+                double newZ = x * sin + z * cos;
+                loc.setX(pivot.getX() + newX);
+                loc.setZ(pivot.getZ() + newZ);
+                loc.setYaw(loc.getYaw() + angle);
+            } else {
+                // Rotate around an axis perpendicular to player's view
+                // Using Rodriguez rotation formula for a vector (x,y,z) around axis (axisX, 0, axisZ)
+                // v' = v cos(theta) + (axis x v) sin(theta) + axis (axis . v) (1 - cos(theta))
+                
+                double dot = x * axisX + z * axisZ;
+                double crossX = -y * axisZ;
+                double crossY = x * axisZ - z * axisX;
+                double crossZ = y * axisX;
+
+                double newX = x * cos + crossX * sin + axisX * dot * (1 - cos);
+                double newY = y * cos + crossY * sin;
+                double newZ = z * cos + crossZ * sin + axisZ * dot * (1 - cos);
+
+                loc.setX(pivot.getX() + newX);
+                loc.setY(pivot.getY() + newY);
+                loc.setZ(pivot.getZ() + newZ);
+                loc.setPitch(loc.getPitch() + angle);
+            }
+            d.teleport(loc);
+        }
     }
 
     public static String reduceFloatLength(String s) {

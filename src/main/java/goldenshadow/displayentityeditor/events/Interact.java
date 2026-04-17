@@ -366,33 +366,14 @@ public class Interact implements Listener {
                 }
             }
             case "InventoryRotateYaw" -> {
-                if (player.isSneaking()) {
-                    displays.forEach(display -> {
-                        display.setRotation((float) (display.getLocation().getYaw() - 1 * Utilities.getToolPrecision(player)), display.getLocation().getPitch());
-                        Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("yaw").formatted(df.format(display.getLocation().getYaw())));
-                    });
-
-                    return;
-                }
-
-                displays.forEach(display -> {
-                    display.setRotation((float) (display.getLocation().getYaw() + 1 * Utilities.getToolPrecision(player)), display.getLocation().getPitch());
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("yaw").formatted(df.format(display.getLocation().getYaw())));
-                });
+                float angle = (player.isSneaking() ? -1 : 1) * Utilities.getToolPrecision(player);
+                Utilities.rotateGroup(displays, Utilities.getAverageLocation(displays), angle, true, player);
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("yaw").formatted(df.format(displays.iterator().next().getLocation().getYaw())));
             }
             case "InventoryRotatePitch" -> {
-                if (player.isSneaking()) {
-                    displays.forEach(display -> {
-                        display.setRotation(display.getLocation().getYaw(), (float) (display.getLocation().getPitch() - 1 * Utilities.getToolPrecision(player)));
-                        Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("pitch").formatted(df.format(display.getLocation().getPitch())));
-                    });
-                    return;
-                }
-
-                displays.forEach(display -> {
-                    display.setRotation(display.getLocation().getYaw(), (float) (display.getLocation().getPitch() + 1 * Utilities.getToolPrecision(player)));
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("pitch").formatted(df.format(display.getLocation().getPitch())));
-                });
+                float angle = (player.isSneaking() ? -1 : 1) * Utilities.getToolPrecision(player);
+                Utilities.rotateGroup(displays, Utilities.getAverageLocation(displays), angle, false, player);
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("pitch").formatted(df.format(displays.iterator().next().getLocation().getPitch())));
             }
             case "InventoryMoveX" -> {
                 if (player.isSneaking()) {
