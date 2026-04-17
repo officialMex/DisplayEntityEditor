@@ -234,6 +234,7 @@ public class Utilities {
     }
 
     public static Location getAverageLocation(Collection<Display> displays) {
+        if (displays == null || displays.isEmpty()) return null;
         double x = 0, y = 0, z = 0;
         for (Display d : displays) {
             x += d.getLocation().getX();
@@ -244,6 +245,7 @@ public class Utilities {
     }
 
     public static void rotateGroup(Collection<Display> displays, Location pivot, float angle, boolean horizontal, Player player) {
+        if (displays == null || displays.isEmpty() || pivot == null) return;
         double rad = Math.toRadians(angle);
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
@@ -266,10 +268,7 @@ public class Utilities {
                 loc.setZ(pivot.getZ() + newZ);
                 loc.setYaw(loc.getYaw() + angle);
             } else {
-                // Rotate around an axis perpendicular to player's view
-                // Using Rodriguez rotation formula for a vector (x,y,z) around axis (axisX, 0, axisZ)
-                // v' = v cos(theta) + (axis x v) sin(theta) + axis (axis . v) (1 - cos(theta))
-                
+                // Rotate around an axis perpendicular to player's view (Rodriguez rotation formula)
                 double dot = x * axisX + z * axisZ;
                 double crossX = -y * axisZ;
                 double crossY = x * axisZ - z * axisX;
@@ -282,7 +281,19 @@ public class Utilities {
                 loc.setX(pivot.getX() + newX);
                 loc.setY(pivot.getY() + newY);
                 loc.setZ(pivot.getZ() + newZ);
-                loc.setPitch(loc.getPitch() + angle);
+
+                // Update orientation correctly for all orientations
+                org.bukkit.util.Vector dir = loc.getDirection();
+                double dx = dir.getX(), dy = dir.getY(), dz = dir.getZ();
+                double dDot = dx * axisX + dz * axisZ;
+                double dCrossX = -dy * axisZ;
+                double dCrossY = dx * axisZ - dz * axisX;
+                double dCrossZ = dy * axisX;
+
+                double newDx = dx * cos + dCrossX * sin + axisX * dDot * (1 - cos);
+                double newDy = dy * cos + dCrossY * sin;
+                double newDz = dz * cos + dCrossZ * sin + axisZ * dDot * (1 - cos);
+                loc.setDirection(new org.bukkit.util.Vector(newDx, newDy, newDz));
             }
             d.teleport(loc);
         }
