@@ -1,9 +1,11 @@
 package goldenshadow.displayentityeditor.enums;
 
+import lombok.Getter;
 import org.bukkit.entity.Display;
 
 import java.util.function.Predicate;
 
+@Getter
 public enum LockSearchMode {
 
     ALL(display -> true),
@@ -16,10 +18,6 @@ public enum LockSearchMode {
 
     LockSearchMode(final Predicate<Display> predicate) {
         this.predicate = predicate;
-    }
-
-    public Predicate<Display> getPredicate() {
-        return this.predicate;
     }
 
     public LockSearchMode previousMode() {

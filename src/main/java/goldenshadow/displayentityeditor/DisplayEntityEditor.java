@@ -13,6 +13,7 @@ import goldenshadow.displayentityeditor.items.InventoryItems;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import lombok.Getter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
@@ -39,6 +40,7 @@ import java.util.function.Consumer;
 
 public final class DisplayEntityEditor extends JavaPlugin {
 
+    @Getter
     private static DisplayEntityEditor plugin;
     public static ConversationFactory conversationFactory;
     public static InventoryFactory inventoryFactory;
@@ -70,6 +72,7 @@ public final class DisplayEntityEditor extends JavaPlugin {
     public static NamespacedKey toolKey;
 
     private final DisplayEntityEditorBrigadierCommand command = new DisplayEntityEditorBrigadierCommand();
+    @Getter
     private EditingHandler editingHandler;
 
     /**
@@ -147,14 +150,6 @@ public final class DisplayEntityEditor extends JavaPlugin {
     }
 
     /**
-     * Getter for the plugin instance
-     * @return The plugin
-     */
-    public static DisplayEntityEditor getPlugin() {
-        return plugin;
-    }
-
-    /**
      * Used to get the newest version of the plugin available on spigot
      * @param consumer The consumer
      */
@@ -179,10 +174,6 @@ public final class DisplayEntityEditor extends JavaPlugin {
             Files.copy(ip, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
         messageManager = new MessageManager();
-    }
-
-    public EditingHandler getEditingHandler() {
-        return this.editingHandler;
     }
 
     public DisplayEntityEditorBrigadierCommand command() {

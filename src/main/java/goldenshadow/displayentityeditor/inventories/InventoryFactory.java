@@ -16,19 +16,6 @@ import org.bukkit.inventory.ItemStack;
 public record InventoryFactory(GUIItems guiItems, InventoryItems inventoryItems) {
 
     /**
-    /**
-     * Getter for the gui items
-     * @return The class containing all gui items
-     */
-    public GUIItems getGuiItems() {
-        return this.guiItems;
-    }
-
-    public InventoryItems getInventoryItems() {
-        return this.inventoryItems;
-    }
-
-    /**
      * Used to create the gui for item displays
      * @param entity The item display entity being edited
      * @return The gui
