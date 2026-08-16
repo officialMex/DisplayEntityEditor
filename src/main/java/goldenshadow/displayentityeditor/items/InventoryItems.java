@@ -3,12 +3,11 @@ package goldenshadow.displayentityeditor.items;
 import goldenshadow.displayentityeditor.DisplayEntityEditor;
 import goldenshadow.displayentityeditor.SelectionMode;
 import goldenshadow.displayentityeditor.Utilities;
-
-import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
 
 /**
  * A utility class where all inventory items are created
@@ -24,7 +23,7 @@ public class InventoryItems {
         Utilities.setMeta(itemStack, DisplayEntityEditor.messageManager.getString("open_gui_name"),
                 DisplayEntityEditor.messageManager.getList("open_gui_lore"),
                 "InventoryGUI"
-                );
+        );
         return itemStack;
     }
 

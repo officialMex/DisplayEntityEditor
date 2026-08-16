@@ -18,8 +18,7 @@ public class PlayerJoin implements Listener {
     public void onJoin(PlayerLoginEvent event) {
         if (event.getPlayer().isOp()) {
             if (DisplayEntityEditor.getPlugin().getConfig().getBoolean("send-update-message-on-join")) {
-                DisplayEntityEditor.
-                getVersion(v -> {
+                DisplayEntityEditor.getVersion(v -> {
                     if (!DisplayEntityEditor.getPlugin().getDescription().getVersion().equals(v)) {
                         event.getPlayer().sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("version_check_fail")));
                         event.getPlayer().sendMessage(ChatColor.GRAY + DisplayEntityEditor.messageManager.getString("version_check_disable_hint"));

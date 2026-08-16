@@ -28,7 +28,9 @@ public class GUIItems {
      * @return The item
      */
     public ItemStack name(String name) {
-        if (name == null) name = DisplayEntityEditor.messageManager.getString("none");
+        if (name == null) {
+            name = DisplayEntityEditor.messageManager.getString("none");
+        }
         ItemStack itemStack = new ItemStack(Material.NAME_TAG);
         Utilities.setMeta(itemStack, DisplayEntityEditor.messageManager.getString("name_name"),
                 DisplayEntityEditor.messageManager.getList("name_lore"),
@@ -297,7 +299,9 @@ public class GUIItems {
      */
     public ItemStack textOpacity(int current) {
         ItemStack itemStack = new ItemStack(Material.DRAGON_BREATH);
-        if (current < 0) current = 0;
+        if (current < 0) {
+            current = 0;
+        }
 
         Utilities.setMeta(itemStack, DisplayEntityEditor.messageManager.getString("text_opacity_name"),
                 DisplayEntityEditor.messageManager.getList("text_opacity_lore"),
@@ -474,6 +478,4 @@ public class GUIItems {
         meta.setBlockData(level);
         itemStack.setItemMeta(meta);
     }
-
-
 }

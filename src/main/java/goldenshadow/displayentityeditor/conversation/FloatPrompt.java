@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 public class FloatPrompt extends NumericPrompt {
 
     private final String message;
@@ -31,7 +30,7 @@ public class FloatPrompt extends NumericPrompt {
     @NotNull
     @Override
     public String getPromptText(@NotNull ConversationContext conversationContext) {
-        return message;
+        return this.message;
     }
 
     /**

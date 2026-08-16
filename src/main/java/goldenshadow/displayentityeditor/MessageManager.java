@@ -21,22 +21,22 @@ public class MessageManager {
         File f = new File(DisplayEntityEditor.getPlugin().getDataFolder().getAbsolutePath() + "/messages.yml");
         InputStream configStream = new FileInputStream(f);
         assert fallbackFileStream != null;
-        fallbackMap = yaml.load(fallbackFileStream);
-        messageMap = yaml.load(configStream);
+        this.fallbackMap = yaml.load(fallbackFileStream);
+        this.messageMap = yaml.load(configStream);
         configStream.close();
         fallbackFileStream.close();
     }
 
     public String getString(String key) {
         String s = "";
-        if (messageMap.containsKey(key) && DisplayEntityEditor.getPlugin().getConfig().getBoolean("use-messages-file")) {
-            Object o = messageMap.get(key);
+        if (this.messageMap.containsKey(key) && DisplayEntityEditor.getPlugin().getConfig().getBoolean("use-messages-file")) {
+            Object o = this.messageMap.get(key);
             if (o instanceof String) {
                 s = (String) o;
             }
         } else {
-            if (fallbackMap.containsKey(key) && !key.equals("file_version")) { //file version should never be gotten from fallback
-                Object o = fallbackMap.get(key);
+            if (this.fallbackMap.containsKey(key) && !key.equals("file_version")) { //file version should never be gotten from fallback
+                Object o = this.fallbackMap.get(key);
                 if (o instanceof String) {
                     s = (String) o;
                 }
@@ -47,10 +47,10 @@ public class MessageManager {
 
     public List<String> getList(String key) {
         Object o = null;
-        if (messageMap.containsKey(key) && DisplayEntityEditor.getPlugin().getConfig().getBoolean("use-messages-file")) {
-            o = messageMap.get(key);
-        } else if (fallbackMap.containsKey(key)) {
-            o = fallbackMap.get(key);
+        if (this.messageMap.containsKey(key) && DisplayEntityEditor.getPlugin().getConfig().getBoolean("use-messages-file")) {
+            o = this.messageMap.get(key);
+        } else if (this.fallbackMap.containsKey(key)) {
+            o = this.fallbackMap.get(key);
         }
 
         List<String> returnList = new ArrayList<>();
@@ -69,10 +69,11 @@ public class MessageManager {
      * @return True if everything is fine, false if the file should be updated
      */
     public boolean isMessageMapComplete() {
-        for (String key : fallbackMap.keySet()) {
-            if (!messageMap.containsKey(key)) return false;
+        for (String key : this.fallbackMap.keySet()) {
+            if (!this.messageMap.containsKey(key)) {
+                return false;
+            }
         }
         return true;
     }
-
 }

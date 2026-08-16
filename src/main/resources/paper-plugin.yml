@@ -4,8 +4,8 @@ main: goldenshadow.displayentityeditor.DisplayEntityEditor
 api-version: 26.2
 
 authors:
-  - _GoldenShadow
-  - officialMex
-  - RettichLP
+- _GoldenShadow
+- officialMex
+- RettichLP
 
 description: A full suite of tools to edit text, item and block display entities

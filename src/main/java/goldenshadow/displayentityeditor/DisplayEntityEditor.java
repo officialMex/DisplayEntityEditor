@@ -1,7 +1,12 @@
 package goldenshadow.displayentityeditor;
 
 import goldenshadow.displayentityeditor.commands.DisplayEntityEditorBrigadierCommand;
-import goldenshadow.displayentityeditor.events.*;
+import goldenshadow.displayentityeditor.events.Interact;
+import goldenshadow.displayentityeditor.events.InventoryClick;
+import goldenshadow.displayentityeditor.events.InventoryClose;
+import goldenshadow.displayentityeditor.events.OffhandSwap;
+import goldenshadow.displayentityeditor.events.PlayerJoin;
+import goldenshadow.displayentityeditor.events.PlayerLeave;
 import goldenshadow.displayentityeditor.inventories.InventoryFactory;
 import goldenshadow.displayentityeditor.items.GUIItems;
 import goldenshadow.displayentityeditor.items.InventoryItems;
@@ -20,11 +25,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public final class DisplayEntityEditor extends JavaPlugin {
@@ -87,13 +97,13 @@ public final class DisplayEntityEditor extends JavaPlugin {
 
         registerBrigadierCommand();
 
-        Bukkit.getPluginManager().registerEvents(new Interact(editingHandler), plugin);
-        Bukkit.getPluginManager().registerEvents(new OffhandSwap(editingHandler), plugin);
+        Bukkit.getPluginManager().registerEvents(new Interact(this.editingHandler), plugin);
+        Bukkit.getPluginManager().registerEvents(new OffhandSwap(this.editingHandler), plugin);
         Bukkit.getPluginManager().registerEvents(new InventoryClick(), plugin);
         Bukkit.getPluginManager().registerEvents(new InventoryClose(), plugin);
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(), plugin);
         Bukkit.getPluginManager().registerEvents(new PlayerLeave(), plugin);
-        
+
         toolSelectionModeKey = new NamespacedKey(plugin, "toolSelectionMode");
         toolSelectionRangeKey = new NamespacedKey(plugin, "toolSelectionRange");
         toolSelectionMultipleKey = new NamespacedKey(plugin, "toolSelectionMultiple");
@@ -119,22 +129,20 @@ public final class DisplayEntityEditor extends JavaPlugin {
                 getLogger().warning(messageManager.getString("messages_file_incomplete"));
             }
         }
-
     }
-    
+
     @Override
     public void onDisable() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            command.returnInventory(player);
+            this.command.returnInventory(player);
         }
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private void registerBrigadierCommand() {
         LifecycleEventManager<Plugin> manager = this.getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
-            commands.register(command.createCommand(), "Command for Display Entity Editor plugin", List.of("dee"));
+            commands.register(this.command.createCommand(), "Command for Display Entity Editor plugin", List.of("dee"));
         });
     }
 
@@ -174,10 +182,10 @@ public final class DisplayEntityEditor extends JavaPlugin {
     }
 
     public EditingHandler getEditingHandler() {
-        return editingHandler;
+        return this.editingHandler;
     }
 
     public DisplayEntityEditorBrigadierCommand command() {
-        return command;
+        return this.command;
     }
 }

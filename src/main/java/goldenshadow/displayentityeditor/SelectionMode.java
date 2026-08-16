@@ -1,12 +1,6 @@
 package goldenshadow.displayentityeditor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
+import goldenshadow.displayentityeditor.enums.LockSearchMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Display;
@@ -14,7 +8,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import goldenshadow.displayentityeditor.enums.LockSearchMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public abstract class SelectionMode {
 
@@ -37,9 +36,8 @@ public abstract class SelectionMode {
         @Override
         protected Stream<Display> select(Player p, double range, Predicate<Display> lockFilter) {
             return p.getWorld().getNearbyEntities(p.getLocation(), range, range, range).stream().filter(DISPLAY_FILTER).map(DISPLAY_CAST)
-                .filter(lockFilter);
+                    .filter(lockFilter);
         }
-
     };
 
     public static final SelectionMode RAYCAST = new SelectionMode("raycast") {
@@ -58,7 +56,7 @@ public abstract class SelectionMode {
             List<Display> displays;
             for (double distance = 0d; distance < range; distance += 0.25d) {
                 displays = world.getNearbyEntities(loc = new Location(world, x + dx * distance, y + dy * distance, z + dz * distance),
-                    0.75d, 0.25d, 0.75d).stream().filter(DISPLAY_FILTER).map(DISPLAY_CAST).filter(lockFilter).toList();
+                        0.75d, 0.25d, 0.75d).stream().filter(DISPLAY_FILTER).map(DISPLAY_CAST).filter(lockFilter).toList();
                 if (displays.isEmpty()) {
                     continue;
                 }
@@ -76,7 +74,6 @@ public abstract class SelectionMode {
             }
             return Stream.empty();
         }
-
     };
 
     private final String id;
@@ -88,21 +85,21 @@ public abstract class SelectionMode {
     }
 
     public final String id() {
-        return id;
+        return this.id;
     }
 
     public final int index() {
-        return idOrder.indexOf(id);
+        return idOrder.indexOf(this.id);
     }
 
     public final SelectionMode previousMode() {
-        int i = idOrder.indexOf(id);
-        return idToMode.get(i == 0 ? idOrder.get(idOrder.size() - 1) : idOrder.get(i - 1));
+        int i = idOrder.indexOf(this.id);
+        return idToMode.get(i == 0 ? idOrder.getLast() : idOrder.get(i - 1));
     }
 
     public final SelectionMode nextMode() {
-        int i = idOrder.indexOf(id);
-        return idToMode.get(i + 1 == idOrder.size() ? idOrder.get(0) : idOrder.get(i + 1));
+        int i = idOrder.indexOf(this.id);
+        return idToMode.get(i + 1 == idOrder.size() ? idOrder.getFirst() : idOrder.get(i + 1));
     }
 
     public final List<Display> select(Player p, LockSearchMode lockSearchMode) {
@@ -131,5 +128,4 @@ public abstract class SelectionMode {
     }
 
     protected abstract Stream<Display> select(Player p, double range, Predicate<Display> lockFilter);
-
 }
