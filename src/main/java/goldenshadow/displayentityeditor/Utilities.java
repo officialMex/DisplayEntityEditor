@@ -282,18 +282,10 @@ public class Utilities {
                 loc.setY(pivot.getY() + newY);
                 loc.setZ(pivot.getZ() + newZ);
 
-                // Update orientation correctly for all orientations
-                org.bukkit.util.Vector dir = loc.getDirection();
-                double dx = dir.getX(), dy = dir.getY(), dz = dir.getZ();
-                double dDot = dx * axisX + dz * axisZ;
-                double dCrossX = -dy * axisZ;
-                double dCrossY = dx * axisZ - dz * axisX;
-                double dCrossZ = dy * axisX;
-
-                double newDx = dx * cos + dCrossX * sin + axisX * dDot * (1 - cos);
-                double newDy = dy * cos + dCrossY * sin;
-                double newDz = dz * cos + dCrossZ * sin + axisZ * dDot * (1 - cos);
-                loc.setDirection(new org.bukkit.util.Vector(newDx, newDy, newDz));
+                // Apply the configured pitch step directly. Rotating the direction vector around
+                // the player's view axis makes the result depend on the display's current yaw
+                // and can also change its yaw unexpectedly. Minecraft limits pitch to +/-90°.
+                loc.setPitch(Location.normalizePitch(loc.getPitch() + angle));
             }
             d.teleport(loc);
         }
