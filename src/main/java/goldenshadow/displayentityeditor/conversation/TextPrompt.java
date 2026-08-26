@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 public class TextPrompt extends StringPrompt {
 
     private final String message;
@@ -28,7 +27,7 @@ public class TextPrompt extends StringPrompt {
     @NotNull
     @Override
     public String getPromptText(@NotNull ConversationContext conversationContext) {
-        return message;
+        return this.message;
     }
 
     /**
@@ -48,8 +47,4 @@ public class TextPrompt extends StringPrompt {
         }
         return END_OF_CONVERSATION;
     }
-
-
-
-
 }

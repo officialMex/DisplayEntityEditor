@@ -5,8 +5,6 @@ import goldenshadow.displayentityeditor.Utilities;
 import goldenshadow.displayentityeditor.enums.InputType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -15,12 +13,12 @@ import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A manager class for handling text inputs
  */
 public class InputManager {
-
 
     /**
      * Used to create a text input that awaits a string
@@ -74,7 +72,6 @@ public class InputManager {
         c.begin();
     }
 
-
     public static boolean isInteger(String s) {
         try {
             Integer.parseInt(s);
@@ -108,8 +105,7 @@ public class InputManager {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    public static void successfulByteInput(InputData inputData, int integer, Player player) {
+    public static void successfulByteInput(@NonNull InputData inputData, int integer, Player player) {
         switch (inputData.inputType()) {
             case TEXT_OPACITY -> {
                 byte b = (byte) integer;
@@ -122,7 +118,7 @@ public class InputManager {
                 if (t.getBackgroundColor() != null) {
                     t.setBackgroundColor(Color.fromARGB(integer, t.getBackgroundColor().getRed(), t.getBackgroundColor().getGreen(), t.getBackgroundColor().getBlue()));
                 } else {
-                    t.setBackgroundColor(Color.fromARGB(integer,0,0,0));
+                    t.setBackgroundColor(Color.fromARGB(integer, 0, 0, 0));
                 }
                 player.sendRawMessage(Utilities.getInfoMessageFormat(DisplayEntityEditor.messageManager.getString("opacity_success")));
             }
@@ -159,7 +155,7 @@ public class InputManager {
     }
 
     @SuppressWarnings("deprecation")
-    public static void successfulTextInput(InputData inputData, String s ,Player player) {
+    public static void successfulTextInput(@NonNull InputData inputData, String s, Player player) {
         switch (inputData.inputType()) {
             case NAME -> {
 
@@ -207,7 +203,7 @@ public class InputManager {
                     if (t.getBackgroundColor() != null) {
                         t.setBackgroundColor(Color.fromARGB(t.getBackgroundColor().getAlpha(), array[0], array[1], array[2]));
                     } else {
-                        t.setBackgroundColor(Color.fromARGB(255,array[0],array[1],array[2]));
+                        t.setBackgroundColor(Color.fromARGB(255, array[0], array[1], array[2]));
                     }
                     player.sendRawMessage(Utilities.getInfoMessageFormat(DisplayEntityEditor.messageManager.getString("background_color_success")));
                 } else {
@@ -219,8 +215,9 @@ public class InputManager {
                 if (array != null) {
 
                     BlockData blockData;
-                    if (inputData.entity() instanceof BlockDisplay) blockData = ((BlockDisplay) inputData.entity()).getBlock();
-                    else {
+                    if (inputData.entity() instanceof BlockDisplay) {
+                        blockData = ((BlockDisplay) inputData.entity()).getBlock();
+                    } else {
                         blockData = null;
                     }
 

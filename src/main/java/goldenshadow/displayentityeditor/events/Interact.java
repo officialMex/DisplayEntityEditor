@@ -5,8 +5,17 @@ import goldenshadow.displayentityeditor.EditingHandler;
 import goldenshadow.displayentityeditor.SelectionMode;
 import goldenshadow.displayentityeditor.Utilities;
 import goldenshadow.displayentityeditor.enums.LockSearchMode;
-import org.bukkit.*;
-import org.bukkit.entity.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -143,47 +152,47 @@ public class Interact implements Listener {
                     if (s != null) {
                         switch (s) {
                             case "InventoryRotateYaw" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().rotateYaw(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().rotateYaw(p));
                             case "InventoryRotatePitch" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().rotatePitch(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().rotatePitch(p));
                             case "InventoryMoveX" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().moveX(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().moveX(p));
                             case "InventoryMoveY" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().moveY(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().moveY(p));
                             case "InventoryMoveZ" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().moveZ(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().moveZ(p));
                             case "InventoryLRX" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().leftRotationX(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().leftRotationX(p));
                             case "InventoryLRY" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().leftRotationY(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().leftRotationY(p));
                             case "InventoryLRZ" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().leftRotationZ(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().leftRotationZ(p));
                             case "InventoryRRX" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().rightRotationX(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().rightRotationX(p));
                             case "InventoryRRY" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().rightRotationY(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().rightRotationY(p));
                             case "InventoryRRZ" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().rightRotationZ(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().rightRotationZ(p));
                             case "InventoryTX" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().translationX(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().translationX(p));
                             case "InventoryTY" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().translationY(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().translationY(p));
                             case "InventoryTZ" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().translationZ(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().translationZ(p));
                             case "InventorySX" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().scaleX(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().scaleX(p));
                             case "InventorySY" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().scaleY(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().scaleY(p));
                             case "InventorySZ" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().scaleZ(p));
-                            case "InventoryToolPrecision" -> 
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().toolPrecision(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().scaleZ(p));
+                            case "InventoryToolPrecision" ->
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().toolPrecision(p));
                             case "InventoryToolSelectionRange" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().toolSelectionRange(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().toolSelectionRange(p));
                             case "InventoryToolSelectionMode" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().toolSelectionMode(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().toolSelectionMode(p));
                             case "InventoryGroupSelect" ->
-                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.getInventoryItems().groupSelectTool(p));
+                                    p.getInventory().setItem(i, DisplayEntityEditor.inventoryFactory.inventoryItems().groupSelectTool(p));
                         }
                     }
                 }
@@ -243,7 +252,7 @@ public class Interact implements Listener {
                 return;
             }
             case "InventoryUnlock" -> {
-                Collection<Display> displays = editingHandler.getEditingDisplays(player, LockSearchMode.LOCKED);
+                Collection<Display> displays = this.editingHandler.getEditingDisplays(player, LockSearchMode.LOCKED);
 
                 if (displays == null) {
                     player.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("unlock_fail")));
@@ -334,7 +343,7 @@ public class Interact implements Listener {
             }
         }
 
-        Collection<Display> displays = editingHandler.getEditingDisplays(player);
+        Collection<Display> displays = this.editingHandler.getEditingDisplays(player);
 
         if (displays == null) {
             player.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("generic_fail")));
@@ -391,8 +400,6 @@ public class Interact implements Listener {
                     display.teleport(display.getLocation().add(0.1 * Utilities.getToolPrecision(player), 0, 0));
                     Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("move_x").formatted(df.format(display.getLocation().getX())));
                 });
-
-
             }
             case "InventoryMoveY" -> {
                 if (player.isSneaking()) {
@@ -407,7 +414,6 @@ public class Interact implements Listener {
                     display.teleport(display.getLocation().add(0, 0.1 * Utilities.getToolPrecision(player), 0));
                     Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("move_y").formatted(df.format(display.getLocation().getY())));
                 });
-
             }
             case "InventoryMoveZ" -> {
                 if (player.isSneaking()) {
@@ -422,11 +428,8 @@ public class Interact implements Listener {
                     display.teleport(display.getLocation().add(0, 0, 0.1 * Utilities.getToolPrecision(player)));
                     Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("move_z").formatted(df.format(display.getLocation().getZ())));
                 });
-
             }
-            case "InventoryHighlight" -> {
-                displays.forEach(Interact::highlightEntity);
-            }
+            case "InventoryHighlight" -> displays.forEach(Interact::highlightEntity);
             case "InventoryCenterPivot" -> {
                 displays.forEach(display -> {
                     Transformation t = display.getTransformation();
@@ -439,193 +442,166 @@ public class Interact implements Listener {
                 });
                 Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("center_pivot"));
             }
-            case "InventoryTX" -> {
-                displays.forEach(display -> {
+            case "InventoryTX" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                if (player.isSneaking()) {
+                    t.getTranslation().add(-0.1f * Utilities.getToolPrecision(player), 0, 0);
+                } else {
+                    t.getTranslation().add(0.1f * Utilities.getToolPrecision(player), 0, 0);
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("translation_x").formatted(df.format(t.getTranslation().x())));
+                display.setTransformation(t);
+            });
+            case "InventoryTY" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                if (player.isSneaking()) {
+                    t.getTranslation().add(0, -0.1f * Utilities.getToolPrecision(player), 0);
+                } else {
+                    t.getTranslation().add(0, 0.1f * Utilities.getToolPrecision(player), 0);
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("translation_y").formatted(df.format(t.getTranslation().y())));
+                display.setTransformation(t);
+            });
+            case "InventoryTZ" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                if (player.isSneaking()) {
+                    t.getTranslation().add(0, 0, -0.1f * Utilities.getToolPrecision(player));
+                } else {
+                    t.getTranslation().add(0, 0, 0.1f * Utilities.getToolPrecision(player));
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("translation_z").formatted(df.format(t.getTranslation().z())));
+                display.setTransformation(t);
+            });
+            case "InventorySX" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                if (player.isSneaking()) {
+                    t.getScale().add(-0.1f * Utilities.getToolPrecision(player), 0, 0);
+                } else {
+                    t.getScale().add(0.1f * Utilities.getToolPrecision(player), 0, 0);
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("scale_x").formatted(df.format(t.getScale().x())));
+                display.setTransformation(t);
+            });
+            case "InventorySY" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                if (player.isSneaking()) {
+                    t.getScale().add(0, -0.1f * Utilities.getToolPrecision(player), 0);
+                } else {
+                    t.getScale().add(0, 0.1f * Utilities.getToolPrecision(player), 0);
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("scale_y").formatted(df.format(t.getScale().y())));
+                display.setTransformation(t);
+            });
+            case "InventorySZ" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                if (player.isSneaking()) {
+                    t.getScale().add(0, 0, -0.1f * Utilities.getToolPrecision(player));
+                } else {
+                    t.getScale().add(0, 0, 0.1f * Utilities.getToolPrecision(player));
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("scale_z").formatted(df.format(t.getScale().z())));
+                display.setTransformation(t);
+            });
+            case "InventoryLRX" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                boolean b = Utilities.getData(display, "GUILRNormalize");
+                if (player.isSneaking()) {
+                    t.getLeftRotation().add(-0.1f * Utilities.getToolPrecision(player), 0, 0, 0);
+                } else {
+                    t.getLeftRotation().add(0.1f * Utilities.getToolPrecision(player), 0, 0, 0);
+                }
+                if (b) {
+                    t.getLeftRotation().normalize();
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("left_rot_x").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getLeftRotation().x())));
+                display.setTransformation(t);
+            });
+            case "InventoryLRY" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                boolean b = Utilities.getData(display, "GUILRNormalize");
+                if (player.isSneaking()) {
+                    t.getLeftRotation().add(0, -0.1f * Utilities.getToolPrecision(player), 0, 0);
+                } else {
+                    t.getLeftRotation().add(0, 0.1f * Utilities.getToolPrecision(player), 0, 0);
+                }
+                if (b) {
+                    t.getLeftRotation().normalize();
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("left_rot_y").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getLeftRotation().y())));
+                display.setTransformation(t);
+            });
+            case "InventoryLRZ" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                boolean b = Utilities.getData(display, "GUILRNormalize");
+                if (player.isSneaking()) {
+                    t.getLeftRotation().add(0, 0, -0.1f * Utilities.getToolPrecision(player), 0);
+                } else {
+                    t.getLeftRotation().add(0, 0, 0.1f * Utilities.getToolPrecision(player), 0);
+                }
+                if (b) {
+                    t.getLeftRotation().normalize();
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("left_rot_z").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getLeftRotation().z())));
+                display.setTransformation(t);
+            });
+            case "InventoryRRX" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                boolean b = Utilities.getData(display, "GUIRRNormalize");
+                if (player.isSneaking()) {
+                    t.getRightRotation().add(-0.1f * Utilities.getToolPrecision(player), 0, 0, 0);
+                } else {
+                    t.getRightRotation().add(0.1f * Utilities.getToolPrecision(player), 0, 0, 0);
+                }
+                if (b) {
+                    t.getRightRotation().normalize();
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("right_rot_x").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getRightRotation().x())));
+                display.setTransformation(t);
+            });
+            case "InventoryRRY" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                boolean b = Utilities.getData(display, "GUIRRNormalize");
+                if (player.isSneaking()) {
+                    t.getRightRotation().add(0, -0.1f * Utilities.getToolPrecision(player), 0, 0);
+                } else {
+                    t.getRightRotation().add(0, 0.1f * Utilities.getToolPrecision(player), 0, 0);
+                }
+                if (b) {
+                    t.getRightRotation().normalize();
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("right_rot_y").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getRightRotation().y())));
+                display.setTransformation(t);
+            });
+            case "InventoryRRZ" -> displays.forEach(display -> {
+                Transformation t = display.getTransformation();
+                boolean b = Utilities.getData(display, "GUIRRNormalize");
+                if (player.isSneaking()) {
+                    t.getRightRotation().add(0, 0, -0.1f * Utilities.getToolPrecision(player), 0);
+                } else {
+                    t.getRightRotation().add(0, 0, 0.1f * Utilities.getToolPrecision(player), 0);
+                }
+                if (b) {
+                    t.getRightRotation().normalize();
+                }
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("right_rot_z").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getRightRotation().z())));
+                display.setTransformation(t);
+            });
+            case "InventoryCenterBlock" -> displays.forEach(display -> {
+                if (display instanceof BlockDisplay) {
                     Transformation t = display.getTransformation();
-                    if (player.isSneaking()) {
-                        t.getTranslation().add((float) (-0.1f * Utilities.getToolPrecision(player)), 0, 0);
-                    } else {
-                        t.getTranslation().add((float) (0.1f * Utilities.getToolPrecision(player)), 0, 0);
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("translation_x").formatted(df.format(t.getTranslation().x())));
+                    t.getTranslation().set(-1 * (t.getScale().x() / 2), -1 * (t.getScale().y() / 2), -1 * (t.getScale().z() / 2));
                     display.setTransformation(t);
-                });
-            }
-            case "InventoryTY" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    if (player.isSneaking()) {
-                        t.getTranslation().add(0, (float) (-0.1f * Utilities.getToolPrecision(player)), 0);
-                    } else {
-                        t.getTranslation().add(0, (float) (0.1f * Utilities.getToolPrecision(player)), 0);
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("translation_y").formatted(df.format(t.getTranslation().y())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventoryTZ" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    if (player.isSneaking()) {
-                        t.getTranslation().add(0, 0, (float) (-0.1f * Utilities.getToolPrecision(player)));
-                    } else {
-                        t.getTranslation().add(0, 0, (float) (0.1f * Utilities.getToolPrecision(player)));
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("translation_z").formatted(df.format(t.getTranslation().z())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventorySX" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    if (player.isSneaking()) {
-                        t.getScale().add((float) (-0.1f * Utilities.getToolPrecision(player)), 0, 0);
-                    } else {
-                        t.getScale().add((float) (0.1f * Utilities.getToolPrecision(player)), 0, 0);
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("scale_x").formatted(df.format(t.getScale().x())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventorySY" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    if (player.isSneaking()) {
-                        t.getScale().add(0, (float) (-0.1f * Utilities.getToolPrecision(player)), 0);
-                    } else {
-                        t.getScale().add(0, (float) (0.1f * Utilities.getToolPrecision(player)), 0);
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("scale_y").formatted(df.format(t.getScale().y())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventorySZ" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    if (player.isSneaking()) {
-                        t.getScale().add(0, 0, (float) (-0.1f * Utilities.getToolPrecision(player)));
-                    } else {
-                        t.getScale().add(0, 0, (float) (0.1f * Utilities.getToolPrecision(player)));
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("scale_z").formatted(df.format(t.getScale().z())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventoryLRX" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    boolean b = Utilities.getData(display, "GUILRNormalize");
-                    if (player.isSneaking()) {
-                        t.getLeftRotation().add((float) (-0.1f * Utilities.getToolPrecision(player)), 0, 0, 0);
-                    } else {
-                        t.getLeftRotation().add((float) (0.1f * Utilities.getToolPrecision(player)), 0, 0, 0);
-                    }
-                    if (b) {
-                        t.getLeftRotation().normalize();
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("left_rot_x").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getLeftRotation().x())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventoryLRY" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    boolean b = Utilities.getData(display, "GUILRNormalize");
-                    if (player.isSneaking()) {
-                        t.getLeftRotation().add(0, (float) (-0.1f * Utilities.getToolPrecision(player)), 0, 0);
-                    } else {
-                        t.getLeftRotation().add(0, (float) (0.1f * Utilities.getToolPrecision(player)), 0, 0);
-                    }
-                    if (b) {
-                        t.getLeftRotation().normalize();
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("left_rot_y").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getLeftRotation().y())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventoryLRZ" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    boolean b = Utilities.getData(display, "GUILRNormalize");
-                    if (player.isSneaking()) {
-                        t.getLeftRotation().add(0, 0, (float) (-0.1f * Utilities.getToolPrecision(player)), 0);
-                    } else {
-                        t.getLeftRotation().add(0, 0, (float) (0.1f * Utilities.getToolPrecision(player)), 0);
-                    }
-                    if (b) {
-                        t.getLeftRotation().normalize();
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("left_rot_z").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getLeftRotation().z())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventoryRRX" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    boolean b = Utilities.getData(display, "GUIRRNormalize");
-                    if (player.isSneaking()) {
-                        t.getRightRotation().add((float) (-0.1f * Utilities.getToolPrecision(player)), 0, 0, 0);
-                    } else {
-                        t.getRightRotation().add((float) (0.1f * Utilities.getToolPrecision(player)), 0, 0, 0);
-                    }
-                    if (b) {
-                        t.getRightRotation().normalize();
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("right_rot_x").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getRightRotation().x())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventoryRRY" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    boolean b = Utilities.getData(display, "GUIRRNormalize");
-                    if (player.isSneaking()) {
-                        t.getRightRotation().add(0, (float) (-0.1f * Utilities.getToolPrecision(player)), 0, 0);
-                    } else {
-                        t.getRightRotation().add(0, (float) (0.1f * Utilities.getToolPrecision(player)), 0, 0);
-                    }
-                    if (b) {
-                        t.getRightRotation().normalize();
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("right_rot_y").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getRightRotation().y())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventoryRRZ" -> {
-                displays.forEach(display -> {
-                    Transformation t = display.getTransformation();
-                    boolean b = Utilities.getData(display, "GUIRRNormalize");
-                    if (player.isSneaking()) {
-                        t.getRightRotation().add(0, 0, (float) (-0.1f * Utilities.getToolPrecision(player)), 0);
-                    } else {
-                        t.getRightRotation().add(0, 0, (float) (0.1f * Utilities.getToolPrecision(player)), 0);
-                    }
-                    if (b) {
-                        t.getRightRotation().normalize();
-                    }
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("right_rot_z").formatted((b ? DisplayEntityEditor.messageManager.getString("normalized") : ""), df.format(t.getRightRotation().z())));
-                    display.setTransformation(t);
-                });
-            }
-            case "InventoryCenterBlock" -> {
-                displays.forEach(display -> {
-                    if (display instanceof BlockDisplay) {
-                        Transformation t = display.getTransformation();
-                        t.getTranslation().set(-1 * (t.getScale().x() / 2), -1 * (t.getScale().y() / 2), -1 * (t.getScale().z() / 2));
-                        display.setTransformation(t);
-                    }
+                }
 
-                    Location loc = display.getLocation();
-                    loc.setX((int) loc.getX() + (((loc.getX()) < 0 ? -1 : 1) * 0.5));
-                    loc.setZ((int) loc.getZ() + (((loc.getZ()) < 0 ? -1 : 1) * 0.5));
-                    if (!player.isSneaking()) {
-                        loc.setY((int) loc.getY() + (((loc.getY()) < 0 ? -1 : 1) * 0.5));
-                    }
-                    display.teleport(loc);
-                    Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("center_block").formatted(loc.getX(), loc.getY(), loc.getZ()));
-                });
-
-            }
+                Location loc = display.getLocation();
+                loc.setX((int) loc.getX() + (((loc.getX()) < 0 ? -1 : 1) * 0.5));
+                loc.setZ((int) loc.getZ() + (((loc.getZ()) < 0 ? -1 : 1) * 0.5));
+                if (!player.isSneaking()) {
+                    loc.setY((int) loc.getY() + (((loc.getY()) < 0 ? -1 : 1) * 0.5));
+                }
+                display.teleport(loc);
+                Utilities.sendActionbarMessage(player, DisplayEntityEditor.messageManager.getString("center_block").formatted(loc.getX(), loc.getY(), loc.getZ()));
+            });
             case "InventoryClone" -> {
                 displays.forEach(display -> {
                     Display clone = (Display) display.getWorld().spawnEntity(display.getLocation(), display.getType(), false);
@@ -638,7 +614,7 @@ public class Interact implements Listener {
                     Collection<Display> group = new HashSet<>();
                     double distance = Utilities.getToolSelectRange(player);
                     Predicate<Display> predicate = Utilities.getToolSearchMode(player).getPredicate();
-                    for (Entity e : player.getNearbyEntities(distance,distance,distance)) {
+                    for (Entity e : player.getNearbyEntities(distance, distance, distance)) {
                         if (e instanceof Display d) {
                             if (predicate.test(d)) {
                                 group.add(d);
@@ -647,17 +623,16 @@ public class Interact implements Listener {
                         }
                     }
                     if (!group.isEmpty()) {
-                        editingHandler.setEditingDisplays(player, group);
+                        this.editingHandler.setEditingDisplays(player, group);
                         player.sendMessage(Utilities.getInfoMessageFormat(DisplayEntityEditor.messageManager.getString("group_select_success").formatted(group.size())));
                     } else {
                         player.sendMessage(Utilities.getErrorMessageFormat(DisplayEntityEditor.messageManager.getString("group_select_fail")));
                     }
                 } else {
-                    editingHandler.removeEditingDisplays(player);
+                    this.editingHandler.removeEditingDisplays(player);
                     player.sendMessage(Utilities.getInfoMessageFormat(DisplayEntityEditor.messageManager.getString("group_select_clear")));
                 }
             }
         }
     }
-
 }

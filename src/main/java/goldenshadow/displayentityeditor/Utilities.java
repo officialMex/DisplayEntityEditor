@@ -1,26 +1,33 @@
 package goldenshadow.displayentityeditor;
 
+import goldenshadow.displayentityeditor.enums.LockSearchMode;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-
-import goldenshadow.displayentityeditor.enums.LockSearchMode;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
 public class Utilities {
-    
+
     /**
      * Used to easily set an items meta
      * @param item The item
@@ -31,7 +38,7 @@ public class Utilities {
     public static void setMeta(ItemStack item, String name, List<String> lore, String data) {
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&' ,name));
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
         lore.replaceAll(textToTranslate -> ChatColor.translateAlternateColorCodes('&', textToTranslate));
         meta.setLore(lore);
         meta.getPersistentDataContainer().set(DisplayEntityEditor.toolKey, PersistentDataType.STRING, data);
@@ -52,7 +59,7 @@ public class Utilities {
     public static void setMeta(ItemStack item, String name, List<String> lore, String data, Object... formatData) {
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&' ,name));
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
         lore.replaceAll(textToTranslate -> ChatColor.translateAlternateColorCodes('&', textToTranslate).formatted(formatData));
         meta.setLore(lore);
         meta.getPersistentDataContainer().set(DisplayEntityEditor.toolKey, PersistentDataType.STRING, data);
@@ -114,7 +121,9 @@ public class Utilities {
      * @return The string representation
      */
     public static String getColor(Color color) {
-        if (color == null) return DisplayEntityEditor.messageManager.getString("none");
+        if (color == null) {
+            return DisplayEntityEditor.messageManager.getString("none");
+        }
         return DisplayEntityEditor.messageManager.getString("rgb").formatted(color.getRed(), color.getBlue(), color.getGreen());
     }
 
@@ -147,7 +156,7 @@ public class Utilities {
         Display entity = null;
         double distance = 5;
         assert location.getWorld() != null;
-        for (Entity e : location.getWorld().getNearbyEntities(location, 5,5,5)) {
+        for (Entity e : location.getWorld().getNearbyEntities(location, 5, 5, 5)) {
             if (e instanceof Display d) {
                 if (lockSearchToggle) {
                     if (!d.getScoreboardTags().contains("dee:locked")) {
@@ -191,50 +200,42 @@ public class Utilities {
     }
 
     public static String getObjectNameMessage(Object object) {
-        if (object instanceof Boolean b) {
-            return DisplayEntityEditor.messageManager.getList("boolean").get(b ? 0 : 1);
-        }
-        else if (object instanceof Display.Billboard b) {
-            return DisplayEntityEditor.messageManager.getList("billboard").get(b.ordinal());
-        }
-        else if (object instanceof TextDisplay.TextAlignment t) {
-            return DisplayEntityEditor.messageManager.getList("text_alignment").get(t.ordinal());
-        }
-        else if (object instanceof ItemDisplay.ItemDisplayTransform t) {
-            return DisplayEntityEditor.messageManager.getList("item_display_transform").get(t.ordinal());
-        }
-        else if (object instanceof LockSearchMode m) {
-            return DisplayEntityEditor.messageManager.getList("lock_search_mode").get(m.ordinal());
-        }
-        else if (object instanceof SelectionMode m) {
-            return DisplayEntityEditor.messageManager.getList("selection_mode").get(m.index());
-        }
-        else return "";
+        return switch (object) {
+            case Boolean b -> DisplayEntityEditor.messageManager.getList("boolean").get(b ? 0 : 1);
+            case Display.Billboard b -> DisplayEntityEditor.messageManager.getList("billboard").get(b.ordinal());
+            case TextDisplay.TextAlignment t -> DisplayEntityEditor.messageManager.getList("text_alignment").get(t.ordinal());
+            case ItemDisplay.ItemDisplayTransform t -> DisplayEntityEditor.messageManager.getList("item_display_transform").get(t.ordinal());
+            case LockSearchMode m -> DisplayEntityEditor.messageManager.getList("lock_search_mode").get(m.ordinal());
+            case SelectionMode m -> DisplayEntityEditor.messageManager.getList("selection_mode").get(m.index());
+            case null, default -> "";
+        };
     }
-    
+
     public static SelectionMode getToolSelectMode(Player p) {
         return SelectionMode.get(p.getPersistentDataContainer().getOrDefault(DisplayEntityEditor.toolSelectionModeKey, PersistentDataType.STRING, "nearby"));
     }
-    
+
     public static LockSearchMode getToolSearchMode(Player p) {
         return LockSearchMode.valueOf(p.getPersistentDataContainer().getOrDefault(DisplayEntityEditor.toolSelectionSearchModeKey, PersistentDataType.STRING, "UNLOCKED"));
     }
-    
+
     public static boolean getToolSelectMultiple(Player p) {
-        return p.getPersistentDataContainer().getOrDefault(DisplayEntityEditor.toolSelectionMultipleKey,  PersistentDataType.BOOLEAN, false);
+        return p.getPersistentDataContainer().getOrDefault(DisplayEntityEditor.toolSelectionMultipleKey, PersistentDataType.BOOLEAN, false);
     }
-    
+
     public static float getToolSelectRange(Player p) {
-        return p.getPersistentDataContainer().getOrDefault(DisplayEntityEditor.toolSelectionRangeKey,  PersistentDataType.DOUBLE, 5d).floatValue();
+        return p.getPersistentDataContainer().getOrDefault(DisplayEntityEditor.toolSelectionRangeKey, PersistentDataType.DOUBLE, 5d).floatValue();
     }
 
     public static float getToolPrecision(Player p) {
-        Double i = p.getPersistentDataContainer().get(DisplayEntityEditor.toolPrecisionKey,  PersistentDataType.DOUBLE);
+        Double i = p.getPersistentDataContainer().get(DisplayEntityEditor.toolPrecisionKey, PersistentDataType.DOUBLE);
         return i != null ? i.floatValue() : 1;
     }
 
     public static Location getAverageLocation(Collection<Display> displays) {
-        if (displays == null || displays.isEmpty()) return null;
+        if (displays == null || displays.isEmpty()) {
+            return null;
+        }
         double x = 0, y = 0, z = 0;
         for (Display d : displays) {
             x += d.getLocation().getX();
@@ -245,7 +246,9 @@ public class Utilities {
     }
 
     public static void rotateGroup(Collection<Display> displays, Location pivot, float angle, boolean horizontal, Player player) {
-        if (displays == null || displays.isEmpty() || pivot == null) return;
+        if (displays == null || displays.isEmpty() || pivot == null) {
+            return;
+        }
         double rad = Math.toRadians(angle);
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
@@ -294,5 +297,4 @@ public class Utilities {
     public static String reduceFloatLength(String s) {
         return s.substring(0, Math.min(s.length(), 4));
     }
-
 }

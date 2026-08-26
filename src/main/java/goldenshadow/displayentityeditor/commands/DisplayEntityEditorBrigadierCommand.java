@@ -30,7 +30,6 @@ import java.util.UUID;
  * Manages all command registration and execution for editing display entities.
  * Handles inventory management and command processing for players.
  */
-@SuppressWarnings("UnstableApiUsage")
 public class DisplayEntityEditorBrigadierCommand {
 
     /** Stores saved player inventories mapped by player UUID for later restoration */
@@ -45,9 +44,11 @@ public class DisplayEntityEditorBrigadierCommand {
         return Commands.literal("displayentityeditor")
                 .executes(ctx -> {
                     Player p = getPlayerOrFail(ctx);
-                    if (p == null) return 0;
+                    if (p == null) {
+                        return 0;
+                    }
 
-                    if (savedInventories.containsKey(p.getUniqueId())) {
+                    if (this.savedInventories.containsKey(p.getUniqueId())) {
                         returnInventory(p);
                         p.sendMessage(Utilities.getInfoMessageFormat(DisplayEntityEditor.messageManager.getString("inventory_returned")));
                         return Command.SINGLE_SUCCESS;
@@ -68,7 +69,9 @@ public class DisplayEntityEditorBrigadierCommand {
                 .then(Commands.literal("reload")
                         .executes(ctx -> {
                             Player p = getPlayerOrFail(ctx);
-                            if (p == null) return 0;
+                            if (p == null) {
+                                return 0;
+                            }
 
                             try {
                                 DisplayEntityEditor.getPlugin().reloadConfig();
@@ -113,7 +116,9 @@ public class DisplayEntityEditorBrigadierCommand {
                         .executes(ctx -> {
                             // Validate player is online and alternate text input is enabled
                             Player p = getPlayerOrFail(ctx);
-                            if (p == null || !DisplayEntityEditor.alternateTextInput) return 0;
+                            if (p == null || !DisplayEntityEditor.alternateTextInput) {
+                                return 0;
+                            }
 
                             // Get the input string and nearest display entity
                             String input = StringArgumentType.getString(ctx, "value");
@@ -151,7 +156,9 @@ public class DisplayEntityEditorBrigadierCommand {
                         .executes(ctx -> {
                             // Validate player is online and alternate text input is enabled
                             Player p = getPlayerOrFail(ctx);
-                            if (p == null || !DisplayEntityEditor.alternateTextInput) return 0;
+                            if (p == null || !DisplayEntityEditor.alternateTextInput) {
+                                return 0;
+                            }
 
                             // Get float value and nearest display entity
                             float value = FloatArgumentType.getFloat(ctx, "value");
@@ -185,7 +192,9 @@ public class DisplayEntityEditorBrigadierCommand {
                         .executes(ctx -> {
                             // Validate player is online and alternate text input is enabled
                             Player p = getPlayerOrFail(ctx);
-                            if (p == null || !DisplayEntityEditor.alternateTextInput) return 0;
+                            if (p == null || !DisplayEntityEditor.alternateTextInput) {
+                                return 0;
+                            }
 
                             // Get byte value and nearest display entity
                             int value = IntegerArgumentType.getInteger(ctx, "value");
@@ -218,7 +227,9 @@ public class DisplayEntityEditorBrigadierCommand {
                         .executes(ctx -> {
                             // Validate player is online and alternate text input is enabled
                             Player p = getPlayerOrFail(ctx);
-                            if (p == null || !DisplayEntityEditor.alternateTextInput) return 0;
+                            if (p == null || !DisplayEntityEditor.alternateTextInput) {
+                                return 0;
+                            }
 
                             // Get integer value and nearest display entity
                             int value = IntegerArgumentType.getInteger(ctx, "value");
@@ -261,7 +272,7 @@ public class DisplayEntityEditorBrigadierCommand {
      */
     private void saveInventory(Player player) {
         // Store a clone of the current inventory contents
-        savedInventories.put(player.getUniqueId(), player.getInventory().getContents().clone());
+        this.savedInventories.put(player.getUniqueId(), player.getInventory().getContents().clone());
         player.getInventory().clear();
     }
 
@@ -273,10 +284,12 @@ public class DisplayEntityEditorBrigadierCommand {
      */
     public void returnInventory(Player player) {
         // Check if an inventory is saved for this player
-        if (!savedInventories.containsKey(player.getUniqueId())) return;
+        if (!this.savedInventories.containsKey(player.getUniqueId())) {
+            return;
+        }
 
         // Retrieve the saved inventory
-        ItemStack[] saved = savedInventories.get(player.getUniqueId());
+        ItemStack[] saved = this.savedInventories.get(player.getUniqueId());
         player.getInventory().clear();
 
         // Restore all items from the saved inventory
@@ -285,6 +298,6 @@ public class DisplayEntityEditorBrigadierCommand {
         }
 
         // Remove the saved inventory from storage
-        savedInventories.remove(player.getUniqueId());
+        this.savedInventories.remove(player.getUniqueId());
     }
 }
